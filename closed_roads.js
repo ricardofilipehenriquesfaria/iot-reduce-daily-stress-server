@@ -1,6 +1,26 @@
 var http = require('http');
 var mysql = require('mysql');
 var io = require('socket.io');
+var ZongJi = require('zongji');
+
+var zongji = new ZongJi({
+  host: 'localhost',
+  user: 'zongji',
+  password: 'zongji'
+});
+
+zongji.on('binlog', function(evt) {
+	evt.dump();
+	console.log(evt);
+});
+
+zongji.start({
+  includeEvents: ['tablemap', 'writerows', 'updaterows', 'deleterows']
+});
+
+process.on('SIGINT', function() {
+  console.log('Got SIGINT.');
+});
 
 var connection = mysql.createConnection({
 	host : 'localhost',
