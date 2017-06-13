@@ -1,26 +1,30 @@
 var http = require('http');
 var mysql = require('mysql');
 var io = require('socket.io');
-var ZongJi = require('zongji');
+var LiveSQL = require('live-sql');
 
-var zongji = new ZongJi({
-  host: 'localhost',
-  user: 'zongji',
-  password: 'zongji'
+var manager = new LiveSQL({
+  "host": "localhost",
+  "user": "zongji",
+  "password": "zongji",
+  "database": "closed_roads"
 });
 
-zongji.on('binlog', function(evt) {
-	evt.dump();
-	console.log(evt);
+manager.subscribe("closed_roads");
+
+manager.on("*.*.*", function(event){
+    
+	if(event.type() == 'tablemap') return;
+	
+    console.log(">> %s -> %s.%s with %s affected rows", 
+        event.type(),
+        event.schema(),
+        event.tableName(),
+        event.effected()
+    );
 });
 
-zongji.start({
-  includeEvents: ['tablemap', 'writerows', 'updaterows', 'deleterows']
-});
-
-process.on('SIGINT', function() {
-  console.log('Got SIGINT.');
-});
+manager.start();
 
 var connection = mysql.createConnection({
 	host : 'localhost',
