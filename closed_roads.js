@@ -16,12 +16,51 @@ manager.on("*.*.*", function(event){
     
 	if(event.type() == 'tablemap') return;
 	
-    console.log(">> %s -> %s.%s with %s affected rows", 
-        event.type(),
-        event.schema(),
-        event.tableName(),
-        event.effected()
-    );
+    if(event.type() == 'update') {
+        
+		for (var i = event.effected() - 1; i >= 0; i--) {
+
+			var eventRows = JSON.stringify(event.rows());
+			var json = JSON.parse(eventRows);
+			var id = json[0].before.id;
+		
+			var eventDiff = JSON.stringify(event.diff(i));
+			var updatedChanges = eventDiff.replace( /[{}]/g, '' );
+		
+			var data = `{"type":"update","id":${id},${updatedChanges}}`;
+			socket.emit(data);
+			console.log(data);
+        };
+    }
+	
+	if(event.type() == 'delete') {
+        
+		for (var i = event.effected() - 1; i >= 0; i--) {
+
+			var eventRows = JSON.stringify(event.rows());
+			var json = JSON.parse(eventRows);
+			var id = json[0].id;
+		
+			var data = `{"type":"delete","id":${id}}`;	 
+			socket.emit(data);
+			console.log(data);
+        };
+    }
+	
+	if(event.type() == 'write') {
+        
+		for (var i = event.effected() - 1; i >= 0; i--) {
+
+			var eventRowsArray = event.rows();
+			var eventRows = eventRowsArray[0];
+			var jsonString = JSON.stringify(eventRows);
+			var insertedChanges = jsonString.replace( /[{}]/g, '' );
+
+		    var data = `{"type":"insert",${insertedChanges}}`;
+			socket.emit(data);
+			console.log(data);
+         };
+    }
 });
 
 manager.start();
