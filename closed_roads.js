@@ -1,6 +1,6 @@
 var http = require('http');
 var mysql = require('mysql');
-var io = require('socket.io');
+var io = require('socket.io').listen(3001);
 var LiveSQL = require('live-sql');
 
 var manager = new LiveSQL({
@@ -27,8 +27,8 @@ manager.on("*.*.*", function(event){
 			var eventDiff = JSON.stringify(event.diff(i));
 			var updatedChanges = eventDiff.replace( /[{}]/g, '' );
 		
-			var data = `{"type":"update","id":${id},${updatedChanges}}`;
-			socket.emit(data);
+			var data = `{"id":${id},${updatedChanges}}`;
+			io.sockets.emit('update', data);
 			console.log(data);
         };
     }
@@ -41,8 +41,8 @@ manager.on("*.*.*", function(event){
 			var json = JSON.parse(eventRows);
 			var id = json[0].id;
 		
-			var data = `{"type":"delete","id":${id}}`;	 
-			socket.emit(data);
+			var data = `{"id":${id}}`;	 
+			io.sockets.emit('delete', data);
 			console.log(data);
         };
     }
@@ -56,8 +56,8 @@ manager.on("*.*.*", function(event){
 			var jsonString = JSON.stringify(eventRows);
 			var insertedChanges = jsonString.replace( /[{}]/g, '' );
 
-		    var data = `{"type":"insert",${insertedChanges}}`;
-			socket.emit(data);
+		    var data = `{${insertedChanges}}`;
+			io.sockets.emit('write', data);
 			console.log(data);
          };
     }
@@ -85,20 +85,17 @@ var server = http.createServer(function(request, response){
     });
 }).listen(3000);
 
-
-var socket = io.listen(server);
-
-socket.on('connection', function(client){ 
+io.on('connection', function(socket){ 
     
 	console.log('Ligação estabelecida com o cliente!');
 
-    client.on('message', function(event){ 
+    socket.on('message', function(event){ 
         console.log('Mensagem recebida do cliente:', event);
     });
 
-    client.on('disconnect',function(){
+    socket.on('disconnect',function(){
         console.log('Ligação perdida!');
     });
 });
 
-console.log('Servidor correndo em http://127.0.0.1:3000/');
+console.log('Servidor correndo em http://127.0.0.1:3001/');
