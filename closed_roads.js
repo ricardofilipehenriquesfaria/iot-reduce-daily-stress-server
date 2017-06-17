@@ -93,6 +93,33 @@ io.on('connection', function(socket){
         console.log('Mensagem recebida do cliente:', event);
     });
 
+	socket.on('device_id', function(event){ 
+	
+		var device_data = JSON.parse(event);
+		
+		var query = "SELECT * FROM android_device WHERE manufacturer='" + device_data.manufacturer 
+			+ "' AND model='" + device_data.model
+			+ "' AND serial='" + device_data.serial + "'";
+			
+		console.log(query);
+			
+		connection.query(query, function(err, results, fields) {
+			
+			if(results.length == 0){
+				
+				var write = "INSERT INTO android_device (manufacturer, model, serial) VALUES ('" + device_data.manufacturer 
+					+ "','" + device_data.model
+					+ "','" + device_data.serial + "')";
+				
+				console.log(write);
+				
+				connection.query(write, function(err, results, fields) {
+					console.log("Novo dispositivo: " + results.insertId);
+				});
+			}
+		});
+    });
+	
     socket.on('disconnect',function(){
         console.log('Ligação perdida!');
     });
