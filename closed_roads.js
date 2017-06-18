@@ -116,6 +116,22 @@ io.on('connection', function(socket){
 				connection.query(write, function(err, results, fields) {
 					console.log("Novo dispositivo: " + results.insertId);
 				});
+			} else {
+				
+				for (var i in results) {
+					
+					var device_id = results[i];
+					
+					var now = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+					
+					var update = "UPDATE android_device SET timestamp='" + now + "' WHERE id=" + device_id.id + "";
+					
+					console.log(update);
+					
+					connection.query(update, function(err, results, fields) {
+						console.log("Timestamp atualizado");
+					});
+				}
 			}
 		});
     });
