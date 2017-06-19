@@ -2,6 +2,7 @@ var http = require('http');
 var mysql = require('mysql');
 var io = require('socket.io').listen(3001);
 var LiveSQL = require('live-sql');
+var moment = require('moment');
 
 var manager = new LiveSQL({
   "host": "localhost",
@@ -121,6 +122,28 @@ io.on('connection', function(socket){
 				for (var i in results) {
 					
 					var device_id = results[i];
+					var lastAccess = "SELECT timestamp from android_device WHERE id=" + device_id.id + "";
+					
+					connection.query(lastAccess, function(err, results, fields) {
+							
+						var lastTimestamp = results[0];
+						var timestamp = new Date(lastTimestamp.timestamp);
+						timestamp = moment(timestamp).local().format('YYYY-MM-DD HH:mm:ss');
+						
+						var selectEntries = "SELECT * from localizacao WHERE timestamp>'" + timestamp + "'";
+						
+						connection.query(selectEntries, function(err, lastResults, fields) {
+							for (var i in lastResults) {
+								
+								var changes = JSON.stringify(lastResults[i]);
+								console.log(changes);
+								
+								var selectedChanges = changes.replace( /[{}]/g, '' );
+								var data = `{${selectedChanges}}`;
+								io.sockets.emit('query',data);
+							};
+						});
+					});
 					
 					var now = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 					
