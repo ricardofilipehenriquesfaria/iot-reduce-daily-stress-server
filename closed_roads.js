@@ -75,7 +75,7 @@ var connection = mysql.createConnection({
 
 var server = http.createServer(function(request, response){ 
     
-	connection.query('SELECT * FROM localizacao', function(err, results, fields) {
+connection.query("SELECT * from localizacao WHERE (data_reabertura>='" + moment().format('YYYY-MM-DD') + "' AND STR_TO_DATE(data_encerramento, '%Y-%m-%d') IS NOT NULL AND STR_TO_DATE(hora_encerramento, '%H:%i:%s') IS NOT NULL AND STR_TO_DATE(hora_reabertura, '%H:%i:%s') IS NOT NULL) ORDER BY id", function(err, results, fields) {
         
 		console.log('Número de Registos: ' + results.length);
 		
@@ -130,7 +130,7 @@ io.on('connection', function(socket){
 						var timestamp = new Date(lastTimestamp.timestamp);
 						timestamp = moment(timestamp).local().format('YYYY-MM-DD HH:mm:ss');
 						
-						var selectEntries = "SELECT * from localizacao WHERE timestamp>'" + timestamp + "' AND data_reabertura>='" + moment().format('YYYY-MM-DD') + "'";
+						var selectEntries = "SELECT * from localizacao WHERE (timestamp >'" + timestamp + "' AND data_reabertura>='" + moment().format('YYYY-MM-DD') + "' AND STR_TO_DATE(data_encerramento, '%Y-%m-%d') IS NOT NULL AND STR_TO_DATE(hora_encerramento, '%H:%i:%s') IS NOT NULL AND STR_TO_DATE(hora_reabertura, '%H:%i:%s') IS NOT NULL) ORDER BY id";
 						
 						connection.query(selectEntries, function(err, lastResults, fields) {
 							for (var i in lastResults) {
