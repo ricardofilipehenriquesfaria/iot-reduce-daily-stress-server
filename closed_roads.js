@@ -15,7 +15,7 @@ manager.subscribe("closed_roads");
 
 manager.on("*.*.*", function(event){
     
-	if(event.type() == 'tablemap') return;
+	if(event.type() == 'tablemap' || event.tableName() != 'localizacao') return;
 	
     if(event.type() == 'update') {
         
@@ -130,7 +130,7 @@ io.on('connection', function(socket){
 						var timestamp = new Date(lastTimestamp.timestamp);
 						timestamp = moment(timestamp).local().format('YYYY-MM-DD HH:mm:ss');
 						
-						var selectEntries = "SELECT * from localizacao WHERE timestamp>'" + timestamp + "'";
+						var selectEntries = "SELECT * from localizacao WHERE timestamp>'" + timestamp + "' AND data_reabertura>='" + moment().format('YYYY-MM-DD') + "'";
 						
 						connection.query(selectEntries, function(err, lastResults, fields) {
 							for (var i in lastResults) {
@@ -144,10 +144,8 @@ io.on('connection', function(socket){
 							};
 						});
 					});
-					
-					var now = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-					
-					var update = "UPDATE android_device SET timestamp='" + now + "' WHERE id=" + device_id.id + "";
+										
+					var update = "UPDATE android_device SET timestamp='" + moment().format('YYYY-MM-DD HH:mm:ss') + "' WHERE id=" + device_id.id + "";
 					
 					console.log(update);
 					
