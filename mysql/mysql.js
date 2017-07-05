@@ -78,6 +78,12 @@ module.exports = {
 				}
 			}
 		});
+	},
+	
+	saveFromCivilProtection: function(write){
+		connection.query(write, function(err, results, fields) {
+			console.log("Novo registo inserido na base de dados: " + results.insertId);
+		});
 	}
 }
 	
