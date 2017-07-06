@@ -2,20 +2,20 @@ var request = require('request');
 var cheerio = require("cheerio");
 
 module.exports = {
-	getFromCivilProtection: function(mysql_module) {
+	getFromCivilProtection: function(mysql_module, nodemailer_module) {
 		request('https://www.procivmadeira.pt/pt/informacao-a-populacao.html', function (error, response, html) {
 			if (!error && response.statusCode == 200) {
 				var $ = cheerio.load(html);
 				$('iframe').each(function(index, element){
 					var url = $(element).attr('src');
-					createNewRequest(url, mysql_module);
+					createNewRequest(url, mysql_module, nodemailer_module);
 				});
 			}
 		});
 	}
 }
 	
-function createNewRequest(url, mysql_module){
+function createNewRequest(url, mysql_module, nodemailer_module){
 	request(url, function (error, response, html) {
 		if (!error && response.statusCode == 200) {
 			var $ = cheerio.load(html);
@@ -63,7 +63,7 @@ function createNewRequest(url, mysql_module){
 						+ "','" + data_reabertura + "')";
 						previous_index = 0;
 						
-					mysql_module.saveFromCivilProtection(write);
+					mysql_module.saveFromCivilProtection(write, nodemailer_module);
 				}	
 			});
 		}

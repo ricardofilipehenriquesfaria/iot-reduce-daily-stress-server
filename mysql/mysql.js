@@ -80,9 +80,11 @@ module.exports = {
 		});
 	},
 	
-	saveFromCivilProtection: function(write){
+	saveFromCivilProtection: function(write, nodemailer_module){
 		connection.query(write, function(err, results, fields) {
-			console.log("Novo registo inserido na base de dados: " + results.insertId);
+			var text_mail = "Novo registo inserido na base de dados: " + results.insertId;
+			console.log(text_mail);
+			nodemailer_module.sendEmail(text_mail);
 		});
 	}
 }
