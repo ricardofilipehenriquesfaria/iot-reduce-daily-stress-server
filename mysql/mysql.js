@@ -82,11 +82,33 @@ module.exports = {
 		});
 	},
 	
-	saveFromCivilProtection: function(write, nodemailer_module, numero_elementos){
-		connection.query(write, function(err, results, fields) {
-			text_mail += "Novo registo inserido na base de dados: " + results.insertId + "\n";
-			if (numero_elementos == 0){
-				nodemailer_module.sendEmail(text_mail);
+	saveFromCivilProtection: function(concelho, nome_via, localizacao, estado, justificacao, data_encerramento, data_reabertura, nodemailer_module, numero_elementos){
+		
+		var query = "SELECT * FROM temp_civil_protection WHERE "
+						+ "concelho='" + concelho 
+						+ "' AND nome_via='" + nome_via
+						+ "' AND localizacao='" + localizacao
+						+ "' AND estado='" + estado
+						+ "' AND justificacao='" + justificacao
+						+ "' AND data_encerramento='" + data_encerramento
+						+ "' AND data_reabertura='" + data_reabertura + "'";
+
+		connection.query(query, function(err, results, fields) { 
+        	if(results.length <= 0){
+        		var write = "INSERT INTO temp_civil_protection (concelho, nome_via, localizacao, estado, justificacao, data_encerramento, data_reabertura) VALUES ('" 
+								+ concelho 
+								+ "','" + nome_via
+								+ "','" + localizacao
+								+ "','" + estado
+								+ "','" + justificacao
+								+ "','" + data_encerramento
+								+ "','" + data_reabertura + "')";
+        		connection.query(write, function(err, results, fields) {
+					text_mail += "Novo registo inserido na base de dados: " + results.insertId + "\n";
+					if (numero_elementos == 0){
+					nodemailer_module.sendEmail(text_mail);
+					}
+        		});  
 			}
 		});
 	}

@@ -55,17 +55,8 @@ function createNewRequest(url, mysql_module, nodemailer_module){
 				} else if (previous_index == 7) {
 					previous_index++;
 				} else if (previous_index == 8) {
-					var write = "INSERT INTO temp_civil_protection (concelho, nome_via, localizacao, estado, justificacao, data_encerramento, data_reabertura) VALUES ('" 
-						+ concelho 
-						+ "','" + nome_via
-						+ "','" + localizacao
-						+ "','" + estado
-						+ "','" + justificacao
-						+ "','" + data_encerramento
-						+ "','" + data_reabertura + "')";
-						previous_index = 0;
-						
-					mysql_module.saveFromCivilProtection(write, nodemailer_module, numero_elementos);
+					mysql_module.saveFromCivilProtection(concelho, nome_via, localizacao, estado, justificacao, data_encerramento, data_reabertura, nodemailer_module, numero_elementos);
+					previous_index = 0;
 				}	
 				numero_elementos--;
 			});
