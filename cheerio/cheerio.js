@@ -27,6 +27,8 @@ function createNewRequest(url, mysql_module, nodemailer_module){
 			var estado = "";
 			var justificacao = "";
 			var data_reabertura = "";
+			var numero_elementos = $('tr td').not('.freezebar-cell').not('.s0').length - 1;
+			
 			$('tr td').not( '.freezebar-cell').not('.s0').each(function(index, element) {
 				
 				if (previous_index == 0) {
@@ -63,8 +65,9 @@ function createNewRequest(url, mysql_module, nodemailer_module){
 						+ "','" + data_reabertura + "')";
 						previous_index = 0;
 						
-					mysql_module.saveFromCivilProtection(write, nodemailer_module);
+					mysql_module.saveFromCivilProtection(write, nodemailer_module, numero_elementos);
 				}	
+				numero_elementos--;
 			});
 		}
 	});

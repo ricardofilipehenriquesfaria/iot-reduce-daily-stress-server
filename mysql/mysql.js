@@ -1,6 +1,8 @@
 var mysql = require('mysql');
 var moment = require('moment');
 
+var text_mail = "";
+
 var connection = mysql.createConnection({
 	host : 'localhost',
 	user : 'root',
@@ -80,11 +82,12 @@ module.exports = {
 		});
 	},
 	
-	saveFromCivilProtection: function(write, nodemailer_module){
+	saveFromCivilProtection: function(write, nodemailer_module, numero_elementos){
 		connection.query(write, function(err, results, fields) {
-			var text_mail = "Novo registo inserido na base de dados: " + results.insertId;
-			console.log(text_mail);
-			nodemailer_module.sendEmail(text_mail);
+			text_mail += "Novo registo inserido na base de dados: " + results.insertId + "\n";
+			if (numero_elementos == 0){
+				nodemailer_module.sendEmail(text_mail);
+			}
 		});
 	}
 }
