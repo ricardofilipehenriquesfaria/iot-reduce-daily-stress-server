@@ -11,4 +11,4 @@ socket_io_module.startServer(mysql_module);
 cron_module.scheduleGetFromCivilProtection(cheerio_module, mysql_module, nodemailer_module);
 
 var io = socket_io_module.getIO();
-livesql_module.getChanges(io);
+livesql_module.getChanges(io, mysql_module);

@@ -111,6 +111,24 @@ module.exports = {
         		});  
 			}
 		});
+	},
+	
+	insertLinkIdInicio: function(id, linkid_inicio){
+		
+		var write = "UPDATE temp_civil_protection SET linkid_inicio=" 
+						+ linkid_inicio + " WHERE id=" + id;
+		connection.query(write, function(err, results, fields) {
+			console.log("Link de Inicio atualizado");
+		});  
+	},
+
+	insertLinkIdFim: function(id, linkid_fim){
+		
+		var write = "UPDATE temp_civil_protection SET linkid_fim=" 
+						+ linkid_fim + " WHERE id=" + id;
+		connection.query(write, function(err, results, fields) {
+			console.log("Link de Fim atualizado");
+		});  
 	}
 }
 	
