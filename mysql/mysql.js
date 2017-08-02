@@ -6,19 +6,23 @@ var text_mail = "";
 var connection = mysql.createConnection({
 	host : 'localhost',
 	user : 'root',
-	password : '',
+	password : 'pool8ball',
 	database : 'closed_roads',
 });
 
 module.exports = {
 	json_page: function(response) {
-		connection.query("SELECT * from civil_protection WHERE (data_reabertura>='" + moment().format('YYYY-MM-DD') + "' AND STR_TO_DATE(data_encerramento, '%Y-%m-%d') IS NOT NULL AND STR_TO_DATE(hora_encerramento, '%H:%i:%s') IS NOT NULL AND STR_TO_DATE(hora_reabertura, '%H:%i:%s') IS NOT NULL) ORDER BY id", function(err, results, fields) {
-		
-			console.log('Número de Registos: ' + results.length);
+		connection.query("SELECT * from civil_protection WHERE (data_reabertura>='" + moment().format('YYYY-MM-DD') + "' ORDER BY id", function(err, results, fields) {
 			
-			response.writeHead(200, { 'Content-Type': 'application/json'});
-			response.end(JSON.stringify(results));
-			response.end();
+			if (err) {
+				console.log(err);
+			} else {
+				console.log('Número de Registos: ' + results.length);
+				
+				response.writeHead(200, { 'Content-Type': 'application/json'});
+				response.end(JSON.stringify(results));
+				response.end();
+			}
 		});
 	},
 	
