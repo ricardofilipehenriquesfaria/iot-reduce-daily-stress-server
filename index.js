@@ -5,6 +5,7 @@ var livesql_module = require('./livesql/livesql.js');
 var cheerio_module = require('./cheerio/cheerio.js');
 var nodemailer_module = require('./nodemailer/nodemailer.js');
 var cron_module = require('./cron/cron.js');
+var url_module = require('./url/url.js');
 
 http_module.createHTTPPage(mysql_module);
 socket_io_module.startServer(mysql_module);

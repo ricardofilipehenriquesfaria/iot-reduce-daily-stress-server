@@ -86,13 +86,16 @@ module.exports = {
 							request_module.getLinkId(mysql_module, id, latitude_inicio, longitude_inicio, 1);
 							request_module.getLinkId(mysql_module, id, latitude_fim, longitude_fim, 2);
 						}
-
-						
 					};
 				}
 			}
 		});
-
+		
+		manager.on("error", function(event){
+			console.log(event);
+			return;
+		});
+		
 		manager.start();
 	}
 }
