@@ -9,11 +9,26 @@ module.exports = {
 			
 			response.writeHead(200, {"Content-Type": "text/plain"});
 			
-			if (queryData.latitude && queryData.longitude) {
-				mysql_module.roads_width_page(response, queryData.latitude, queryData.longitude);
+			if(Array.isArray(queryData.latitude) && Array.isArray(queryData.longitude)){
+				
+				mysql_module.roads_width_page(queryData, queryData.latitude.length, function(results){
+					response.writeHead(200, { 'Content-Type': 'application/json'});
+					response.end(results);
+					response.end();
+				});
+				
+			} else if (queryData.latitude && queryData.longitude) {
+				
+				mysql_module.roads_width_page(queryData, 1, function(results){
+					response.writeHead(200, { 'Content-Type': 'application/json'});
+					response.end(results);
+					response.end();
+				});
+				
 			} else {
 				response.end('');
 			}
+			
 		}).listen(8000);
 	}
 }

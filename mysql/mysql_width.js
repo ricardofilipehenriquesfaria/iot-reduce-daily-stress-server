@@ -3,30 +3,44 @@ var mysql = require('mysql');
 var connection = mysql.createConnection({
 	host : 'localhost',
 	user : 'root',
-	password : '',
+	password : 'pool8ball',
 	database : 'roads_data',
+	multipleStatements: true,
 });
 
 module.exports = {
-	roads_width_page: function(response, latitude, longitude) {
+	roads_width_page: function(queryData, numberParameters, callback) {
 		
-		var query = "SELECT * FROM bounding_boxes WHERE southLatitude <= '" + latitude
-				+ "' AND northLatitude >= '" + latitude 
-				+ "' AND westLongitude <= '" + longitude
-				+ "' AND eastLongitude >= '" + longitude + "'";
+		var query = "";
+		if(numberParameters > 1){
+			for(var i = 0; i < numberParameters; i++){
+				query = query + "SELECT * FROM funchal_roads WHERE id = (SELECT id FROM bounding_boxes WHERE southLatitude <= '" + queryData.latitude[i]
+					+ "' AND northLatitude >= '" + queryData.latitude[i]
+					+ "' AND westLongitude <= '" + queryData.longitude[i]
+					+ "' AND eastLongitude >= '" + queryData.longitude[i] + "' LIMIT 1);";		
+			}
+		} else {
+			query = query + "SELECT * FROM funchal_roads WHERE id = (SELECT id FROM bounding_boxes WHERE southLatitude <= '" + queryData.latitude
+					+ "' AND northLatitude >= '" + queryData.latitude
+					+ "' AND westLongitude <= '" + queryData.longitude
+					+ "' AND eastLongitude >= '" + queryData.longitude + "' LIMIT 1);";	
+		}
 		
 		connection.query(query, function(err, results, fields) {
 		
 			if(results.length > 0){
-				connection.query("SELECT * from funchal_roads WHERE id = '" + results[0].id_funchal_roads + "'", function(err, results, fields) {
-					if(results.length > 0){
-						response.writeHead(200, { 'Content-Type': 'application/json'});
-						response.end(JSON.stringify(results));
-						response.end();
-					}
-				});
+				
+				var array = [];
+				
+				for(var i = 0; i < results.length; i++){
+					var string = JSON.stringify(results[i]);
+					string = string.replace(/[\[\]']+/g,'');
+					array.push(string);
+				}
+				
+				callback(JSON.stringify(array));
 			} else {
-				response.end("Nenhuma estrada correspondente!");
+				callback(JSON.stringify([0]));
 			}
 		});
 	}

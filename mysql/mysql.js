@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 module.exports = {
 	json_page: function(response) {
-		connection.query("SELECT * from civil_protection WHERE (data_reabertura>='" + moment().format('YYYY-MM-DD') + "' ORDER BY id", function(err, results, fields) {
+		connection.query("SELECT * from civil_protection WHERE data_reabertura>='" + moment().format('YYYY-MM-DD') + "' ORDER BY id", function(err, results, fields) {
 			
 			if (err) {
 				console.log(err);
