@@ -7,6 +7,7 @@ var cheerio_module = require('./cheerio/cheerio.js');
 var nodemailer_module = require('./nodemailer/nodemailer.js');
 var cron_module = require('./cron/cron.js');
 var url_module = require('./url/url.js');
+var firebase_module = require('./firebase/firebase.js');
 
 http_module.createHTTPPage(mysql_module);
 socket_io_module.startServer(mysql_module);
