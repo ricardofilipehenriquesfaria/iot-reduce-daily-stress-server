@@ -133,6 +133,20 @@ module.exports = {
 		connection.query(write, function(err, results, fields) {
 			console.log("Link de Fim atualizado");
 		});  
+	},
+	
+	searchTomorrowClosedRoads(firebase_module){
+
+		connection.query("SELECT * from civil_protection WHERE (data_encerramento>='" + moment().add(1, 'days').format('YYYY-MM-DD') + "' AND data_encerramento<='" + moment().add(2, 'days').format('YYYY-MM-DD') +"') ORDER BY id", function(err, results, fields) {
+			
+			if (err) {
+				console.log(err);
+			} else {
+				if(results.length > 0){
+					firebase_module.sendNotification(results.justificacao, results.nome_via);
+				}
+			}
+		});
 	}
 }
 	

@@ -12,6 +12,7 @@ var firebase_module = require('./firebase/firebase.js');
 http_module.createHTTPPage(mysql_module);
 socket_io_module.startServer(mysql_module);
 cron_module.scheduleGetFromCivilProtection(cheerio_module, mysql_module, nodemailer_module);
+cron_module.scheduleSendNotifications(mysql_module, firebase_module);
 url_module.getCoordinatesWidth(mysql_width_module);
 
 var io = socket_io_module.getIO();
