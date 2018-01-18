@@ -8,12 +8,14 @@ var nodemailer_module = require('./nodemailer/nodemailer.js');
 var cron_module = require('./cron/cron.js');
 var url_module = require('./url/url.js');
 var firebase_module = require('./firebase/firebase.js');
+var download_file_module = require('./download_file/download_file.js');
 
 http_module.createHTTPPage(mysql_module);
 socket_io_module.startServer(mysql_module);
 cron_module.scheduleGetFromCivilProtection(cheerio_module, mysql_module, nodemailer_module);
 cron_module.scheduleSendNotifications(mysql_module, firebase_module);
 url_module.getCoordinatesWidth(mysql_width_module);
+download_file_module.downloadFile();
 
 var io = socket_io_module.getIO();
 livesql_module.getChanges(io, mysql_module);
