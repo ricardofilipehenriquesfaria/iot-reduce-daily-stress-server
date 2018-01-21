@@ -15,8 +15,8 @@ http_module.createHTTPPage(mysql_module);
 socket_io_module.startServer(mysql_module);
 cron_module.scheduleGetFromCivilProtection(read_xml_module, mysql_module, nodemailer_module);
 cron_module.scheduleSendNotifications(mysql_module, firebase_module);
+cron_module.scheduleDownloadFile(download_file_module);
 url_module.getCoordinatesWidth(mysql_width_module);
-download_file_module.downloadFile();
 
 var io = socket_io_module.getIO();
 livesql_module.getChanges(io, mysql_module);

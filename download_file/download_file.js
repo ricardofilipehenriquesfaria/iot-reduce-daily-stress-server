@@ -7,11 +7,11 @@ var options = {
     filename: "protecao_civil.kml"
 }
  
- module.exports = {
+module.exports = {
 	downloadFile: function() {
 		download(url, options, function(err){
 		if (err) throw err
-			console.log("Download de ficheiro efetuado com sucesso!")
+			console.log("Download de ficheiro efetuado com sucesso!");
 		})
 	}
 }
