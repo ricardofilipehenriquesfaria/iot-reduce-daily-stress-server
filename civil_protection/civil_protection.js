@@ -112,43 +112,7 @@ request(constants.CIVIL_PROTECTION_URL, (error, response, body) => {
                     let latitude = coordinates[0];
                     let longitude = coordinates[1];
 
-                    let overpassApiRequest = constants.OVERPASS_API_URL +
-                        "[out:json][timeout:25];" +
-                        "(" +
-                        "way" +
-                        "(around:20," + latitude + "," + longitude + ")" +
-                        "[highway][highway!='pedestrian'][highway!='footway']" +
-                        "(if:is_tag(name) || is_tag(alt_name) || is_tag(ref));" +
-                        ">;);" +
-                        "out body;";
-
-                    request(overpassApiRequest, (error, response, body) => {
-                        if (error) {
-                            messages.throwErrorMessage(error);
-                            return;
-                        }
-
-                        if (response.statusCode !== 200) messages.throwStatusCodeErrorMessage(response.statusCode, overpassApiRequest);
-                        else {
-
-                            if (JSON.parse(body).elements.length) {
-                                let nameArray = [];
-                                for (let j in JSON.parse(body).elements) {
-
-                                    if (JSON.parse(body).elements[j].type === 'way') {
-
-                                        if (JSON.parse(body).elements[j].tags.name) {
-                                            if(nameArray.indexOf(JSON.parse(body).elements[j].tags.name) === -1) nameArray.push(JSON.parse(body).elements[j].tags.name);
-                                        } else if (JSON.parse(body).elements[j].tags.alt_name) {
-                                            if(nameArray.indexOf(JSON.parse(body).elements[j].tags.alt_name) === -1) nameArray.push(JSON.parse(body).elements[j].tags.alt_name);
-                                        } else if (JSON.parse(body).elements[j].tags.ref) {
-                                            if(nameArray.indexOf(JSON.parse(body).elements[j].tags.ref) === -1) nameArray.push(JSON.parse(body).elements[j].tags.ref);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    callOverpassAPI(latitude, longitude, 20);
                 }
             });
             wait.for.time(5);
@@ -157,12 +121,132 @@ request(constants.CIVIL_PROTECTION_URL, (error, response, body) => {
     }
 });
 
-let getOverpassUrl = function (key, value) {
-    console.log(constants.OVERPASS_API_URL +
+let callOverpassAPI = (latitude, longitude, around) => {
+    let overpassApiRequest = constants.OVERPASS_API_URL +
         "[out:json][timeout:25];" +
-        "way[" + key + "=\"" + value + "\"];" +
-        "(._;>;);" +
-        "out body;");
+        "(" +
+        "way" +
+        "(around:" + around + "," + latitude + "," + longitude + ")" +
+        "[highway][highway!='pedestrian'][highway!='footway']" +
+        "(if:is_tag(name) || is_tag(alt_name) || is_tag(ref));" +
+        ">;);" +
+        "out body;";
+
+    request(overpassApiRequest, (error, response, body) => {
+        if (error) {
+            messages.throwErrorMessage(error);
+            return;
+        }
+
+        if (response.statusCode !== 200) messages.throwStatusCodeErrorMessage(response.statusCode, overpassApiRequest);
+        else {
+
+            if (JSON.parse(body).elements.length) {
+                let nameArray = [];
+                for (let j in JSON.parse(body).elements) {
+
+                    if (JSON.parse(body).elements[j].type === 'way') {
+
+                        if (JSON.parse(body).elements[j].tags.name) {
+                            if(nameArray.indexOf(JSON.parse(body).elements[j].tags.name) === -1) nameArray.push(JSON.parse(body).elements[j].tags.name);
+                        } else if (JSON.parse(body).elements[j].tags.alt_name) {
+                            if(nameArray.indexOf(JSON.parse(body).elements[j].tags.alt_name) === -1) nameArray.push(JSON.parse(body).elements[j].tags.alt_name);
+                        } else if (JSON.parse(body).elements[j].tags.ref) {
+                            if(nameArray.indexOf(JSON.parse(body).elements[j].tags.ref) === -1) nameArray.push(JSON.parse(body).elements[j].tags.ref);
+                        }
+                    }
+                }
+                if(nameArray.length > 1) {
+
+                    switch(around) {
+                        case 20:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 19);
+                            break;
+                        case 19:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 18);
+                            break;
+                        case 18:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 17);
+                            break;
+                        case 17:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 16);
+                            break;
+                        case 16:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 15);
+                            break;
+                        case 15:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 14);
+                            break;
+                        case 14:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 13);
+                            break;
+                        case 13:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 12);
+                            break;
+                        case 12:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 11);
+                            break;
+                        case 11:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 10);
+                            break;
+                        case 10:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 9);
+                            break;
+                        case 9:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 8);
+                            break;
+                        case 8:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 7);
+                            break;
+                        case 7:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 6);
+                            break;
+                        case 6:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 5);
+                            break;
+                        case 5:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 4);
+                            break;
+                        case 4:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 3);
+                            break;
+                        case 3:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 2);
+                            break;
+                        case 2:
+                            wait.for.time(2);
+                            callOverpassAPI(latitude, longitude, 1);
+                            break;
+                        default:
+                            return;
+                    }
+                } else if (nameArray.length === 1) {
+                    console.log(nameArray);
+                }
+            }
+        }
+    });
+};
+
+let getOverpassUrl = function (key, value) {
     return constants.OVERPASS_API_URL +
         "[out:json][timeout:25];" +
         "way[" + key + "=\"" + value + "\"];" +
